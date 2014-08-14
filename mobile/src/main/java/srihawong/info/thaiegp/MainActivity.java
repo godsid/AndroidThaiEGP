@@ -8,6 +8,7 @@ import android.app.FragmentManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.Layout;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -16,6 +17,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 
@@ -132,6 +135,31 @@ public class MainActivity extends Activity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            TableLayout tableLayout = (TableLayout) rootView.findViewById(R.id.tableLayout);
+
+            //ViewGroup tableLayout = (TableLayout) rootView.findViewById(R.id.tableLayout);
+
+            Context context = getActivity().getApplicationContext();
+
+            //TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
+
+
+
+            for(int i=0;i<10;i++){
+                TextView textView = new TextView(context);
+                textView.setText("text"+String.valueOf(i));
+
+                textView.setLayoutParams(new TableRow.LayoutParams());
+
+                TableRow tableRow = new TableRow(context);
+
+                tableLayout.addView(tableRow);
+
+                tableRow.addView(textView);
+
+            }
+
+
             return rootView;
         }
 
@@ -140,6 +168,10 @@ public class MainActivity extends Activity
             super.onAttach(activity);
             ((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
+        }
+
+        public void guide(){
+
         }
     }
 
