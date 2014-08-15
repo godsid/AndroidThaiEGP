@@ -21,6 +21,19 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
 
+import com.androidquery.AQuery;
+import com.androidquery.callback.AjaxCallback;
+import com.androidquery.callback.AjaxStatus;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+
 
 public class MainActivity extends Activity
         implements NavigationDrawerFragment.NavigationDrawerCallbacks {
@@ -116,6 +129,9 @@ public class MainActivity extends Activity
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+        public TableRow tableRow;
+        public TextView textView;
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -143,8 +159,64 @@ public class MainActivity extends Activity
 
             //TableRow.LayoutParams layoutParams = new TableRow.LayoutParams();
 
+            final String channelString = "CH3,CH5,CH7,CH9";
+            TableRow.LayoutParams layoutParams;
+            AQuery aq = new AQuery(context);
+
+            String[] channel = channelString.split(",");
+            tableRow = new TableRow(context);
+            layoutParams = new TableRow.LayoutParams();
+            textView = new TextView(context);
+            textView.setLayoutParams(layoutParams);
+            textView.setText("CH");
+            tableRow.addView(textView);
+            for(int i=1;i<48;i++){
+                layoutParams.span = 1;
+                textView = new TextView(context);
+                        textView.setLayoutParams(layoutParams);
+                        textView.setText("dd");
+                tableRow.addView(textView);
+            }
+            tableLayout.addView(tableRow);
+
+            for(int i=0,j=channel.length;i<j;i++){
+                tableRow = new TableRow(context);
+                textView = new TextView(context);
+                textView.setLayoutParams(layoutParams);
+                textView.setText(channel[i].toString());
+                String date = new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+                String url = "http://srihawong.info/app/thaiegp/channel.php?ch="+channel[i].toString()+"&date="+date;
+                aq.ajax(url, JSONArray.class,3600,new AjaxCallback<JSONArray>(){
+                    @Override
+                    public void callback(String url, JSONArray object, AjaxStatus status) {
+                        //super.callback(url, object, status);
+                        Context cc = getActivity().getApplicationContext();
+                        for(int k=0,l=object.length();k<l;k++){
+                            try {
+                                JSONObject dd = object.getJSONObject(k);
+                                textView = new TextView(cc);
+                                textView.setText(dd.getString("title_name_tha"));
+                                tableRow.addView(textView);
 
 
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+
+
+
+                    }
+                });
+
+                tableRow.addView(textView);
+                tableLayout.addView(tableRow);
+            }
+
+
+
+            /*
             for(int i=0;i<10;i++){
                 TextView textView = new TextView(context);
                 textView.setText("text"+String.valueOf(i));
@@ -158,7 +230,7 @@ public class MainActivity extends Activity
                 tableRow.addView(textView);
 
             }
-
+        */
 
             return rootView;
         }
